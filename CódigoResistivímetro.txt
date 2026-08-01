@@ -1,0 +1,301 @@
+// ============================================================
+//  RESISTIVÍMETRO CÒDIGO
+// ============================================================
+
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_ADS1X15.h>
+#include <INA226_WE.h>
+
+// ---- INA226 ----
+#define INA226_I2C_ADDRESS 0x40
+#define SHUNT_RESISTANCE   0.1
+
+// ---- OLED ----
+#define SCREEN_W   128
+#define SCREEN_H    64
+#define OLED_RESET  -1
+
+// ---- Pines ----
+#define PIN_FASES   5
+#define PIN_MUESTRA 8
+#define REL_CUR    10
+#define REL_POL     7
+
+// ---- ADC ----
+#define LSB  0.0001875F
+#define DEB  50
+
+Adafruit_SSD1306 display(SCREEN_W, SCREEN_H, &Wire, OLED_RESET);
+Adafruit_ADS1115 ads;
+INA226_WE ina226(INA226_I2C_ADDRESS);
+
+// Resultados globales
+float dvMostrar_mV  = 0.0;
+float iMostrar_mA   = 0.0;
+float rMostrar_Ohm  = 0.0;
+bool  hayMedicion   = false;
+
+// ============================================================
+// Variables para evitar refresco innecesario
+// ============================================================
+
+float lastDV = -9999;
+float lastI  = -9999;
+float lastR  = -9999;
+bool  forceRefresh = true;
+
+// ============================================================
+void setup() {
+
+  pinMode(PIN_FASES,   INPUT);
+  pinMode(PIN_MUESTRA, INPUT);
+  pinMode(REL_CUR,     OUTPUT);
+  pinMode(REL_POL,     OUTPUT);
+
+  digitalWrite(REL_CUR, LOW);
+  digitalWrite(REL_POL, LOW);
+
+  Wire.begin();
+
+  // ==========================================================
+  // OLED
+  // ==========================================================
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) while (1);
+
+  display.clearDisplay();
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
+
+  display.setCursor(0, 24);
+  display.print("Listo");
+  display.display();
+
+  // ==========================================================
+  // ADS1115
+  // ==========================================================
+  if (!ads.begin()) while (1);
+
+  ads.setGain(GAIN_TWOTHIRDS);
+
+  // ==========================================================
+  // INA226
+  // ==========================================================
+  if (!ina226.init()) while (1);
+
+  ina226.setResistorRange(SHUNT_RESISTANCE, 0.5);
+  ina226.setMeasureMode(INA226_CONTINUOUS);
+  ina226.setCorrectionFactor(0.817);
+}
+
+// ============================================================
+// Toma N muestras
+// ============================================================
+void tomarMuestras(int n, int delayMs, float &vProm_V, float &iProm_A) {
+
+  float sumV = 0.0;
+  float sumI = 0.0;
+
+  for (int i = 0; i < n; i++) {
+
+    sumV += abs(ads.readADC_Differential_0_1() * LSB);
+    sumI += abs(ina226.getCurrent_A());
+
+    delay(delayMs);
+  }
+
+  vProm_V = sumV / (float)n;
+  iProm_A = sumI / (float)n;
+}
+
+// ============================================================
+// Calcula resultado final
+// ============================================================
+void calcularResultado(float vAB, float vBA, float iAB, float iBA) {
+
+  float dvFinal_V = (vAB + vBA) / 2.0;
+  float iFinal_A  = (iAB + iBA) / 2.0;
+
+  dvMostrar_mV = dvFinal_V * 1000.0;
+  iMostrar_mA  = iFinal_A  * 1000.0;
+
+  // mV / mA = Ohm
+  if (iMostrar_mA < 0.001) {
+    rMostrar_Ohm = -1.0;
+  } else {
+    rMostrar_Ohm = dvMostrar_mV / iMostrar_mA;
+  }
+
+  hayMedicion = true;
+  forceRefresh = true;
+}
+
+// ============================================================
+// Mensaje temporal
+// ============================================================
+void mostrarMensaje(const char* msg) {
+
+  display.clearDisplay();
+
+  display.setCursor(0, 24);
+  display.print(msg);
+
+  display.display();
+}
+
+// ============================================================
+// Actualiza pantalla SOLO si cambian datos
+// ============================================================
+void actualizarDisplay() {
+
+  // Evita refresco innecesario
+  if (!forceRefresh &&
+      abs(lastDV - dvMostrar_mV) < 0.01 &&
+      abs(lastI  - iMostrar_mA) < 0.01 &&
+      abs(lastR  - rMostrar_Ohm) < 0.01) {
+    return;
+  }
+
+  lastDV = dvMostrar_mV;
+  lastI  = iMostrar_mA;
+  lastR  = rMostrar_Ohm;
+
+  forceRefresh = false;
+
+  // ==========================================================
+  // Render
+  // ==========================================================
+  display.clearDisplay();
+
+  display.setCursor(0, 0);
+  display.print("DV: ");
+  display.print(dvMostrar_mV, 2);
+  display.print(" mV");
+
+  display.setCursor(0, 16);
+  display.print("I:  ");
+  display.print(iMostrar_mA, 2);
+  display.print(" mA");
+
+  display.setCursor(0, 32);
+
+  if (!hayMedicion) {
+
+    display.print("R: -- Ohm");
+
+  } else if (rMostrar_Ohm < 0) {
+
+    display.print("R: SIN CORRIENTE");
+
+  } else if (rMostrar_Ohm > 99999.0) {
+
+    display.print("R: >99k Ohm");
+
+  } else {
+
+    display.print("R: ");
+    display.print(rMostrar_Ohm, 2);
+    display.print(" Ohm");
+  }
+
+  display.display();
+}
+
+// ============================================================
+void loop() {
+
+  // ==========================================================
+  // MODO 1: 2 FASES
+  // ==========================================================
+  if (digitalRead(PIN_MUESTRA)) {
+
+    delay(DEB);
+
+    mostrarMensaje("Midiendo 2F...");
+
+    float vAB = 0;
+    float vBA = 0;
+    float iAB = 0;
+    float iBA = 0;
+
+    digitalWrite(REL_CUR, HIGH);
+
+    // Fase A
+    digitalWrite(REL_POL, LOW);
+    delay(250);
+    tomarMuestras(4, 62, vAB, iAB);
+
+    // Fase B
+    digitalWrite(REL_POL, HIGH);
+    delay(250);
+    tomarMuestras(4, 62, vBA, iBA);
+
+    digitalWrite(REL_CUR, LOW);
+    digitalWrite(REL_POL, LOW);
+
+    calcularResultado(vAB, vBA, iAB, iBA);
+
+    while (digitalRead(PIN_MUESTRA));
+  }
+
+  // ==========================================================
+  // MODO 2: 8 FASES
+  // ==========================================================
+  if (digitalRead(PIN_FASES)) {
+
+    delay(DEB);
+
+    mostrarMensaje("Midiendo 8F...");
+
+    float vAB = 0;
+    float vBA = 0;
+    float iAB = 0;
+    float iBA = 0;
+
+    float vT = 0;
+    float iT = 0;
+
+    digitalWrite(REL_CUR, HIGH);
+
+    for (int c = 0; c < 4; c++) {
+
+      // Fase A
+      digitalWrite(REL_POL, LOW);
+      delay(250);
+
+      tomarMuestras(1, 250, vT, iT);
+
+      vAB += vT;
+      iAB += iT;
+
+      // Fase B
+      digitalWrite(REL_POL, HIGH);
+      delay(250);
+
+      tomarMuestras(1, 250, vT, iT);
+
+      vBA += vT;
+      iBA += iT;
+    }
+
+    digitalWrite(REL_CUR, LOW);
+    digitalWrite(REL_POL, LOW);
+
+    calcularResultado(
+      vAB / 4.0,
+      vBA / 4.0,
+      iAB / 4.0,
+      iBA / 4.0
+    );
+
+    while (digitalRead(PIN_FASES));
+  }
+
+  // ==========================================================
+  // DISPLAY
+  // ==========================================================
+  actualizarDisplay();
+
+  delay(400);
+}
