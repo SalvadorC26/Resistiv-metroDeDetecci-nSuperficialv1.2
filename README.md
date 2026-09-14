@@ -1,4 +1,4 @@
-# Resistivimetrodedeteccionsuperficialv1.2.0
+# Resistivimetrodedeteccionsuperficialv1.2.2
 
 Dispositivo experimental de bajo costo para la adquisición de datos de resistividad eléctrica del subsuelo mediante técnicas de prospección geofísica con corriente continua.
 
