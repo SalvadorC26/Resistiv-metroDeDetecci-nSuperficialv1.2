@@ -9,6 +9,7 @@ authors:
   given-names: "Jesús Salvador"
   repository-code: "https://github.com/SalvadorC26/Resistiv-metroDeDetecci-nSuperficialv1.2"
   license: "Custom"
+  license-url: "https://github.com/SalvadorC26/Resistiv-metroDeDetecci-nSuperficialv1.2/blob/main/LICENSE.md"
   keywords:
 * "resistividad eléctrica"
 * "prospección geofísica"
