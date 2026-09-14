@@ -16,3 +16,7 @@ keywords:
   - "hardware científico"
   - "instrumentación de bajo costo"
 abstract: "Dispositivo experimental de bajo costo para la adquisición de datos de resistividad eléctrica del subsuelo. El proyecto integra hardware electrónico, firmware y documentación técnica para la construcción y utilización de un resistivímetro de prospección superficial."
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.22742735"
+    description: "DOI de la versión archivada en Zenodo"
