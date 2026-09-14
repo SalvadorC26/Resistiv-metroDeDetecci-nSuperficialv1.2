@@ -5,15 +5,11 @@ title: "Resistivímetro de detección superficial"
 version: "1.2.2"
 date-released: "2026-09-14"
 
-type: software
-
 authors:
   - family-names: "Cortés Díaz"
     given-names: "Jesús Salvador"
 
 repository-code: "https://github.com/SalvadorC26/Resistiv-metroDeDetecci-nSuperficialv1.2"
-
-license: "Other"
 
 keywords:
   - "resistividad eléctrica"
