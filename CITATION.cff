@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "Si utiliza este proyecto en una investigación, publicación, tesis o trabajo académico, por favor cite este proyecto."
+
+title: "Resistivímetro de detección superficial"
+version: "1.2.2"
+date-released: "2026-09-14"
+
+authors:
+  - family-names: "Cortés Díaz"
+    given-names: "Jesús Salvador"
+
+repository-code: "https://github.com/SalvadorC26/Resistiv-metroDeDetecci-nSuperficialv1.2"
+
+keywords:
+  - "resistividad eléctrica"
+  - "prospección geofísica"
+  - "arqueología forense"
+  - "instrumentación geofísica"
+  - "Arduino"
+  - "hardware científico"
+  - "instrumentación de bajo costo"
+
+abstract: "Dispositivo experimental de bajo costo para la adquisición de datos de resistividad eléctrica del subsuelo. El proyecto integra hardware electrónico, firmware y documentación técnica para la construcción y utilización de un resistivímetro de prospección superficial."
