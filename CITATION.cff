@@ -1,8 +1,8 @@
-cff-version: 1.2.0
+cff-version: 1.2.1
 message: "Si utiliza este proyecto en una investigación, publicación, tesis o trabajo académico, por favor cite la fuente correspondiente."
 
 title: "Resistivímetro de detección superficial"
-version: "1.2.0"
+version: "1.2.1"
 date-released: "2026-09-13"
 
 authors:
