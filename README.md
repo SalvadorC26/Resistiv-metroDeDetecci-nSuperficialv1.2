@@ -1,6 +1,8 @@
 # Resistivimetrodedeteccionsuperficialv1.2
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22742735.svg)](https://doi.org/10.5281/zenodo.22742735)
 
+Referencia: Cortés Díaz, J. S. (2026). Resistivímetro de detección superficial (v1.2.0) [Software/Hardware]. Zenodo. https://doi.org/10.5281/zenodo.22742735
+
 Dispositivo experimental de bajo costo para la adquisición de datos de resistividad eléctrica del subsuelo mediante técnicas de prospección geofísica con corriente continua.
 
 ## Descripción
