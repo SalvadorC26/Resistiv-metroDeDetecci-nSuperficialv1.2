@@ -1,9 +1,11 @@
 cff-version: 1.2.1
-message: "Si utiliza este proyecto en una investigación, publicación, tesis o trabajo académico, por favor cite la fuente correspondiente."
+message: "Si utiliza este proyecto en una investigación, publicación, tesis o trabajo académico, por favor cite este proyecto."
 
 title: "Resistivímetro de detección superficial"
 version: "1.2.1"
-date-released: "2026-09-13"
+date-released: "2026-09-14"
+
+type: software
 
 authors:
   - family-names: "Cortés Díaz"
@@ -11,7 +13,7 @@ authors:
 
 repository-code: "https://github.com/SalvadorC26/Resistiv-metroDeDetecci-nSuperficialv1.2"
 
-license: "Licencia de uso no comercial y atribución"
+license: "Other"
 
 keywords:
   - "resistividad eléctrica"
@@ -23,13 +25,3 @@ keywords:
   - "instrumentación de bajo costo"
 
 abstract: "Dispositivo experimental de bajo costo para la adquisición de datos de resistividad eléctrica del subsuelo. El proyecto integra hardware electrónico, firmware y documentación técnica para la construcción y utilización de un resistivímetro de prospección superficial."
-
-preferred-citation:
-  type: thesis
-  authors:
-    - family-names: "Cortés Díaz"
-      given-names: "Jesús Salvador"
-  title: "Desarrollo de un dispositivo de prospección geofísica para aplicaciones en arqueología forense"
-  institution:
-    name: "Escuela Nacional de Antropología e Historia"
-  notes: "Tesis de Licenciatura en Arqueología."
