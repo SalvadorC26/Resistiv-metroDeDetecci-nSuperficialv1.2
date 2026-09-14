@@ -133,7 +133,7 @@ La referencia bibliográfica correspondiente será incorporada a este repositori
 
 ## Estado del proyecto
 
-**Versión:** 1.2
+**Versión:** 1.2.0
 **Estado:** Desarrollo experimental / investigación académica
 
 Este repositorio corresponde a la versión pública del dispositivo utilizada como referencia para la documentación de su desarrollo y evaluación experimental.
